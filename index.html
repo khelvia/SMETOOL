@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SME Fragmentation Diagnostic </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-gradient {
+            background: linear-gradient(90deg, #3b82f6 0%, #f97316 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-[#0b0f1a] text-slate-200 min-h-screen selection:bg-orange-500/30">
+    <!-- Animated Background Blobs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-600/20 blur-[100px] rounded-full animate-pulse"></div>
+        <div
+            class="absolute -bottom-24 -left-24 w-96 h-96 bg-orange-600/10 blur-[100px] rounded-full animate-pulse delay-1000">
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 max-w-4xl py-12">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-16">
+            <div
+                class="text-2xl font-extrabold tracking-tighter bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                SME DIAGNOSTIC TOOL</div>
+            <div class="text-sm font-medium text-slate-500 uppercase tracking-widest">v2.0 Beta</div>
+        </header>
+
+        <!-- Landing View -->
+        <main id="view-landing" class="space-y-8 text-center py-12">
+            <div class="space-y-4">
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-tight">
+                    Scale Your SME <br><span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-orange-400">Without the
+                        Friction</span>
+                </h1>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+                    A comprehensive 20-point diagnostic to identify structural fragmentations across your business. Get
+                    your severity score and industry benchmark in minutes.
+                </p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button onclick="startApp()"
+                    class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)]">
+                    Start Assessment
+                </button>
+                <div class="text-sm text-slate-500 font-medium">Takes approx. 4 minutes</div>
+            </div>
+        </main>
+
+        <!-- Assessment View -->
+        <main id="view-assessment" class="hidden space-y-8">
+            <div class="space-y-4">
+                <div class="flex justify-between items-end">
+                    <div class="space-y-1">
+                        <span id="label-category"
+                            class="text-xs font-bold uppercase tracking-widest text-orange-400">Section 1: Supply
+                            Chain</span>
+                        <h2 id="label-step" class="text-2xl font-bold text-white uppercase italic">Step 1 of 8</h2>
+                    </div>
+                    <div class="text-right">
+                        <span id="label-progress" class="text-3xl font-black text-white italic">12%</span>
+                    </div>
+                </div>
+                <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div id="bar-progress" class="h-full progress-gradient transition-all duration-500 ease-out"
+                        style="width: 12%"></div>
+                </div>
+            </div>
+
+            <div id="section-questions-container" class="space-y-6">
+                <!-- Section questions will be injected here -->
+            </div>
+
+            <div class="flex justify-between items-center px-4 pt-4 border-t border-slate-800">
+                <button id="btn-prev" onclick="goToPrev()"
+                    class="px-6 py-3 glass rounded-xl text-slate-400 hover:text-white transition-all font-semibold disabled:opacity-0">
+                    &larr; Previous Section
+                </button>
+                <button id="btn-next" onclick="goToNext()"
+                    class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    Next Section &rarr;
+                </button>
+            </div>
+        </main>
+
+        <!-- Results View -->
+        <main id="view-results" class="hidden space-y-12">
+            <div class="text-center space-y-4">
+                <h1 class="text-4xl font-extrabold text-white">Your Fragmentation Profile</h1>
+                <p class="text-slate-400">Comprehensive analysis of your operational maturity.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Severity Card -->
+                <div class="glass p-8 rounded-3xl col-span-1 flex flex-col items-center justify-center text-center space-y-4 border-t-4"
+                    id="card-severity">
+                    <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Aggregate Score</span>
+                    <div id="score-total" class="relative">
+                        <svg class="h-32 w-32 transform -rotate-90">
+                            <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent"
+                                class="text-slate-800" />
+                            <circle id="score-circle" cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8"
+                                fill="transparent" stroke-dasharray="364.4" stroke-dashoffset="364.4"
+                                class="text-blue-500 transition-all duration-1000" />
+                        </svg>
+                        <span id="score-text"
+                            class="absolute inset-0 flex items-center justify-center text-4xl font-extrabold text-white">0</span>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 id="severity-label" class="text-xl font-bold text-white uppercase">Loading...</h3>
+                        <p id="severity-desc" class="text-xs text-slate-400 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Benchmarks Chart -->
+                <div class="glass p-8 rounded-3xl col-span-1 md:col-span-2 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-white">Category Benchmarks</h3>
+                        <div class="flex gap-4 text-[10px] font-bold uppercase">
+                            <div class="flex items-center gap-1.5"><span
+                                    class="h-2 w-2 rounded-full bg-blue-500"></span> You</div>
+                            <div class="flex items-center gap-1.5"><span
+                                    class="h-2 w-2 rounded-full bg-slate-700"></span> Market</div>
+                        </div>
+                    </div>
+                    <div id="chart-container" class="space-y-4">
+                        <!-- Dynamic categories will be injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-8 rounded-3xl space-y-6">
+                <h3 class="text-xl font-bold text-white">Strategic Archetype Analysis</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <h4 id="archetype-title" class="text-lg font-bold text-orange-400">Loading...</h4>
+                        <p id="archetype-content" class="text-sm text-slate-400 leading-relaxed"></p>
+                    </div>
+                    <div class="bg-slate-900/50 p-6 rounded-2xl space-y-3 border border-slate-800">
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Top Recommendation</h4>
+                        <p id="archetype-action" class="text-sm text-slate-300 italic"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center pt-8">
+                <button onclick="location.reload()"
+                    class="px-8 py-3 glass rounded-xl text-slate-400 hover:text-white transition-all font-semibold">
+                    Restart Assessment
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const QUESTIONS = [
+            // Supply Chain (Q1-3)
+            { cat: "Supply Chain", q: "How reliable and cost-effective is your last-mile distribution or product delivery?" },
+            { cat: "Supply Chain", q: "How stable is your input supply or sourcing of raw materials/inventory?" },
+            { cat: "Supply Chain", q: "How fragmented or inefficient are your supply chain-related payments/transactions?" },
+            // Demand (Q4-6)
+            { cat: "Demand", q: "To what extent can your customers access your products or services digitally?" },
+            { cat: "Demand", q: "How structured and accessible is your customer data (e.g., purchase history)?" },
+            { cat: "Demand", q: "How much do you rely on traditional word-of-mouth vs. digital acquisition?" },
+            // Capital (Q7-8)
+            { cat: "Capital", q: "How accessible and affordable is external debt or equity funding for your business?" },
+            { cat: "Capital", q: "How efficient is your cash flow management and payment reconciliation process?" },
+            // Regulatory (Q9-10)
+            { cat: "Regulatory", q: "How burdensome and unpredictable is the regulatory and compliance landscape?" },
+            { cat: "Regulatory", q: "How reliable and affordable is the basic infrastructure (power, roads, internet)?" },
+            // Talent (Q11-12)
+            { cat: "Talent", q: "How difficult is it to find, train, and retain skilled talent in your market?" },
+            { cat: "Talent", q: "How much of your HR management is digitized vs. manual/ad-hoc?" },
+            // Technology (Q13-14)
+            { cat: "Technology", q: "How digitized and efficient are your core internal operations?" },
+            { cat: "Technology", q: "To what extent are your different software systems (ERP, CRM) integrated?" },
+            // Competitive (Q15-17)
+            { cat: "Competitive", q: "How effectively can you track and respond to competitor price changes?" },
+            { cat: "Competitive", q: "How significantly do niche or digital-first players threaten your market share?" },
+            { cat: "Competitive", q: "How differentiated is your product compared to the general market offering?" },
+            // Operations (Q18-20)
+            { cat: "Operations", q: "How much of your operational time is spent on manual, repetitive tasks?" },
+            { cat: "Operations", q: "How easily can your current operational processes scale to 10x volume?" },
+            { cat: "Operations", q: "How well-documented and standardized are your internal SOPs?" }
+        ];
+
+        const SEVERITIES = [
+            { threshold: 85, label: "Integrated", color: "border-emerald-500", desc: "You have a highly synchronized system with minimal fragmentation bottlenecks." },
+            { threshold: 70, label: "Optimized", color: "border-blue-500", desc: "Solid infrastructure with some isolated inefficiencies in specific departments." },
+            { threshold: 50, label: "Moderate", color: "border-yellow-500", desc: "Fragmentations are starting to impact scalability and margin retention." },
+            { threshold: 30, label: "Fragmented", color: "border-orange-500", desc: "Significant functional silos are creating frequent operational fires." },
+            { threshold: 0, label: "Critical", color: "border-red-500", desc: "Severe fragmentation is actively threatening business continuity." }
+        ];
+
+        const BENCHMARKS = {
+            "Supply Chain": 3.2, "Demand": 3.5, "Capital": 2.8, "Regulatory": 2.5,
+            "Talent": 3.0, "Technology": 2.7, "Competitive": 3.4, "Operations": 3.1
+        };
+
+        const ARCHETYPES = [
+            { name: "The Scalable Leader", target: "Operations", threshold: 4.0, text: "Your structure is uniquely poised for rapid expansion with low friction.", action: "Invest in M&A or international expansion to leverage your operational efficiency." },
+            { name: "Supply Chain Victim", target: "Supply Chain", threshold: 2.5, text: "Inbound and outbound logistics are your primary profit drain.", action: "Implement IoT tracking and real-time vendor management to reduce logistics variability." },
+            { name: "Data Isolated", target: "Demand", threshold: 2.5, text: "Your lack of customer connectivity makes you vulnerable to digital disruption.", action: "Deploy a centralized CDP and shift 30% of marketing to performance-based digital channels." },
+            { name: "Capital Constrained", target: "Capital", threshold: 2.5, text: "Limited financing access is capping your growth ceiling despite demand.", action: "Improve accounting transparency to become 'Bank-Ready' for institutional debt." },
+            { name: "Manual Bottleneck", target: "Operations", threshold: 2.5, text: "Talent is wasted on low-value manual processing tasks.", action: "Standardize top 5 high-frequency tasks and automate using RPA or low-code tools." }
+        ];
+
+        let answers = new Array(QUESTIONS.length).fill(null);
+        let currentSectionIndex = 0;
+
+        const SECTIONS = [...new Set(QUESTIONS.map(q => q.cat))];
+
+        function startApp() {
+            document.getElementById('view-landing').classList.add('hidden');
+            document.getElementById('view-assessment').classList.remove('hidden');
+            showSection();
+        }
+
+        function showSection() {
+            const sectionName = SECTIONS[currentSectionIndex];
+            const sectionQuestions = QUESTIONS.map((q, idx) => ({ ...q, originalIndex: idx }))
+                .filter(q => q.cat === sectionName);
+
+            document.getElementById('label-category').innerText = `Section: ${sectionName}`;
+            document.getElementById('label-step').innerText = `Step ${currentSectionIndex + 1} of ${SECTIONS.length}`;
+
+            const prog = Math.round(((currentSectionIndex + 1) / SECTIONS.length) * 100);
+            document.getElementById('label-progress').innerText = `${prog}%`;
+            document.getElementById('bar-progress').style.width = `${prog}%`;
+
+            document.getElementById('btn-prev').disabled = currentSectionIndex === 0;
+            document.getElementById('btn-next').innerText = currentSectionIndex === SECTIONS.length - 1 ? "Get Results" : "Next Section →";
+
+            const container = document.getElementById('section-questions-container');
+            container.innerHTML = sectionQuestions.map(data => `
+                <div class="glass rounded-3xl p-6 md:p-8 space-y-6">
+                    <p class="text-lg md:text-xl font-medium text-slate-100 leading-relaxed">
+                        ${data.q}
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        ${[1, 2, 3, 4, 5].map(val => `
+                            <button onclick="recordAnswer(${data.originalIndex}, ${val})" 
+                                class="q-${data.originalIndex}-btn p-3 border ${answers[data.originalIndex] === val ? 'border-blue-500 bg-blue-500/20 text-white' : 'border-slate-700 text-slate-400'} rounded-xl hover:border-blue-400 transition-all text-center">
+                                <span class="block text-xl font-bold mb-1">${val}</span>
+                                <span class="text-[10px] font-medium uppercase tracking-tighter">${getLabel(val)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            updateButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getLabel(val) {
+            const labels = ["Severe", "Fragmented", "Moderate", "Integrated", "Scale-Ready"];
+            return labels[val - 1];
+        }
+
+        function recordAnswer(qIndex, val) {
+            answers[qIndex] = val;
+
+            // Highlight selected button
+            const sectionName = SECTIONS[currentSectionIndex];
+            const sectionQuestions = QUESTIONS.map((q, idx) => ({ ...q, originalIndex: idx }))
+                .filter(q => q.cat === sectionName);
+
+            sectionQuestions.forEach(q => {
+                const buttons = document.querySelectorAll(`.q-${q.originalIndex}-btn`);
+                buttons.forEach((btn, idx) => {
+                    const score = idx + 1;
+                    if (answers[q.originalIndex] === score) {
+                        btn.classList.add('border-blue-500', 'bg-blue-500/20', 'text-white');
+                        btn.classList.remove('border-slate-700', 'text-slate-400');
+                    } else {
+                        btn.classList.remove('border-blue-500', 'bg-blue-500/20', 'text-white');
+                        btn.classList.add('border-slate-700', 'text-slate-400');
+                    }
+                });
+            });
+
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const sectionName = SECTIONS[currentSectionIndex];
+            const sectionQuestions = QUESTIONS.map((q, idx) => ({ ...q, originalIndex: idx }))
+                .filter(q => q.cat === sectionName);
+            const allAnswered = sectionQuestions.every(q => answers[q.originalIndex] !== null);
+            document.getElementById('btn-next').disabled = !allAnswered;
+        }
+
+        function goToNext() {
+            if (currentSectionIndex < SECTIONS.length - 1) {
+                currentSectionIndex++;
+                showSection();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function goToPrev() {
+            if (currentSectionIndex > 0) {
+                currentSectionIndex--;
+                showSection();
+            }
+        }
+
+        function calculateResults() {
+            document.getElementById('view-assessment').classList.add('hidden');
+            document.getElementById('view-results').classList.remove('hidden');
+
+            const totalSum = answers.reduce((a, b) => a + b, 0);
+            const rawPct = (totalSum / (QUESTIONS.length * 5)) * 100;
+            const finalScore = Math.round(rawPct);
+
+            // Severity Logic
+            const sev = SEVERITIES.find(s => finalScore >= s.threshold);
+            document.getElementById('severity-label').innerText = sev.label;
+            document.getElementById('severity-desc').innerText = sev.desc;
+            document.getElementById('card-severity').classList.add(sev.color);
+
+            // Animate Score
+            document.getElementById('score-text').innerText = finalScore;
+            const circle = document.getElementById('score-circle');
+            const offset = 364.4 - (364.4 * finalScore) / 100;
+            setTimeout(() => circle.style.strokeDashoffset = offset, 300);
+
+            // Category Scores
+            const cats = {};
+            QUESTIONS.forEach((q, i) => {
+                if (!cats[q.cat]) cats[q.cat] = { sum: 0, count: 0 };
+                cats[q.cat].sum += answers[i];
+                cats[q.cat].count++;
+            });
+
+            const chart = document.getElementById('chart-container');
+            chart.innerHTML = '';
+
+            Object.keys(cats).forEach(cat => {
+                const avg = cats[cat].sum / cats[cat].count;
+                const bench = BENCHMARKS[cat];
+                const row = document.createElement('div');
+                row.className = "space-y-1.5";
+                row.innerHTML = `
+                    <div class="flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        <span>${cat}</span>
+                        <span>Score: ${avg.toFixed(1)}</span>
+                    </div>
+                    <div class="relative h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-700/50" style="width: ${bench * 20}%"></div>
+                        <div class="absolute inset-0 bg-blue-500 rounded-full transition-all duration-1000" style="width: 0%" data-w="${avg * 20}%"></div>
+                    </div>
+                `;
+                chart.appendChild(row);
+            });
+
+            // Trigger animations
+            setTimeout(() => {
+                document.querySelectorAll('[data-w]').forEach(el => el.style.width = el.getAttribute('data-w'));
+            }, 500);
+
+            // Archetype Logic
+            let archetype = ARCHETYPES[0]; // Default Scalable
+            const sortedCats = Object.keys(cats).sort((a, b) => (cats[a].sum / cats[a].count) - (cats[b].sum / cats[b].count));
+            const weakest = sortedCats[0];
+            const weakestScore = cats[weakest].sum / cats[weakest].count;
+
+            if (weakestScore < 3.0) {
+                const specificMatch = ARCHETYPES.find(a => a.target === weakest);
+                if (specificMatch) archetype = specificMatch;
+                else archetype = ARCHETYPES[4]; // Manual Bottleneck default
+            }
+
+            document.getElementById('archetype-title').innerText = archetype.name;
+            document.getElementById('archetype-content').innerText = archetype.text;
+            document.getElementById('archetype-action').innerText = archetype.action;
+        }
+    </script>
+</body>
+
+</html>
